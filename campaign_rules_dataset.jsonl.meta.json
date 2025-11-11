@@ -1,0 +1,48 @@
+{
+  "csv_file": "kpi_profiles.csv",
+  "model": "glm-4.6:cloud",
+  "temperature": 0.85,
+  "output_file": "/Users/sachinpb/PycharmProjects/syntha/campaign_rules_dataset.jsonl",
+  "distribution": {
+    "simple": 2,
+    "medium": 2,
+    "complex": 1
+  },
+  "plan": [
+    {
+      "index": 0,
+      "record_id": "rule-000001",
+      "complexity": "simple",
+      "offset": 0
+    },
+    {
+      "index": 1,
+      "record_id": "rule-000002",
+      "complexity": "simple",
+      "offset": 651
+    },
+    {
+      "index": 2,
+      "record_id": "rule-000003",
+      "complexity": "medium",
+      "offset": 1563
+    },
+    {
+      "index": 3,
+      "record_id": "rule-000004",
+      "complexity": "medium",
+      "offset": 3102
+    },
+    {
+      "index": 4,
+      "record_id": "rule-000005",
+      "complexity": "complex",
+      "offset": 4985
+    }
+  ],
+  "completed": 5,
+  "requested_examples": 5,
+  "resolved_examples": 5,
+  "started_at": "2025-11-11T12:36:18.323820",
+  "last_generated_at": "2025-11-11T12:36:44.405476"
+}
