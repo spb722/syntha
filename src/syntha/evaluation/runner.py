@@ -7,8 +7,8 @@ from typing import Dict, List, Optional
 
 from deepeval.test_case import LLMTestCase
 
-from deepeval_adapter import OllamaJudge
-from deepeval_metrics import FaithfulnessMetric, SchemaMetric, ScheduleIsolationMetric
+from .adapter import OllamaJudge
+from .metrics import FaithfulnessMetric, SchemaMetric, ScheduleIsolationMetric
 
 
 def meta_path_for_output(output_path: Path) -> Path:

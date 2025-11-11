@@ -1,0 +1,20 @@
+# Structured Data Extraction Configuration
+
+model:
+  name: "glm-4.6:cloud"
+  host: "http://localhost:11434"
+  timeout: 60
+
+extraction:
+  schema_validation: true
+  retry_on_failure: true
+  max_retries: 3
+
+output:
+  directory: "outputs/structured"
+  format: "jsonl"
+  include_metadata: true
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

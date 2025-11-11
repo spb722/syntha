@@ -1,0 +1,24 @@
+# Evaluation Pipeline Configuration
+
+metrics:
+  - name: "answer_relevancy"
+    threshold: 0.7
+  - name: "faithfulness"
+    threshold: 0.8
+
+evaluation:
+  batch_size: 10
+  parallel: false
+
+output:
+  directory: "outputs/evaluations"
+  format: "jsonl"
+  include_metadata: true
+
+filtering:
+  passed_output: "outputs/filtered/campaign_rules_passed.jsonl"
+  failed_output: "outputs/filtered/campaign_rules_failed.jsonl"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

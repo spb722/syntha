@@ -5,7 +5,7 @@ from deepeval.metrics.base_metric import BaseMetric
 from deepeval.test_case import LLMTestCase
 from pydantic import BaseModel
 
-from deepeval_adapter import OllamaJudge
+from .adapter import OllamaJudge
 class StructuredOutputSchema(BaseModel):
     normal_statements: list[str]
     schedule: str
