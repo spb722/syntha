@@ -43,6 +43,10 @@ outputs/
 !outputs/.gitkeep
 !outputs/*/.gitkeep
 
+# Project specs and documentation
+specs/
+syn/
+
 # OS files
 .DS_Store
 Thumbs.db
