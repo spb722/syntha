@@ -277,7 +277,7 @@ def parse_args():
     )
     parser.add_argument(
         "--input",
-        default="campaign_rules_dataset.jsonl",
+        default="outputs/datasets/campaign_rules_dataset.jsonl",
         help="Path to the generated campaign rules JSONL file from step 1.",
     )
     parser.add_argument(
@@ -286,7 +286,7 @@ def parse_args():
     )
     parser.add_argument(
         "--output",
-        default="campaign_rules_structured.jsonl",
+        default="outputs/structured/campaign_rules_structured.jsonl",
         help="Destination JSONL file with structured statements.",
     )
     parser.add_argument(

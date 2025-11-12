@@ -1,0 +1,64 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# Generated outputs
+outputs/
+*.jsonl
+*.jsonl.meta.json
+
+# Exception: Keep directory structure
+!outputs/.gitkeep
+!outputs/*/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Build tools
+*.egg-info/
+dist/
+build/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmyp.json

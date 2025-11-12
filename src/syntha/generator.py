@@ -558,7 +558,7 @@ def parse_args():
     )
     parser.add_argument(
         "--csv-file",
-        default="kpi_profiles.csv",
+        default="data/kpi_profiles.csv",
         help="Path to the KPI CSV input.",
     )
     parser.add_argument(
@@ -576,7 +576,7 @@ def parse_args():
     )
     parser.add_argument(
         "--output",
-        default="campaign_rules_dataset.jsonl",
+        default="outputs/datasets/campaign_rules_dataset.jsonl",
         help="Output JSONL path (metadata stored alongside).",
     )
     parser.add_argument(

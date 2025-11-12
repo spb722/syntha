@@ -1,0 +1,461 @@
+# Migration Map Contract
+# Defines the mapping from old structure to new structure
+# This contract ensures all files are accounted for and properly migrated
+
+version: "1.0"
+project_name: "syntha"
+migration_date: "2025-11-11"
+base_path: "/Users/sachinpb/PycharmProjects/syntha"
+
+# Source files - Python code that needs to be moved and have imports updated
+source_files:
+  - old_path: "synthetic_generator.py"
+    new_path: "src/syntha/generator.py"
+    file_type: "source"
+    has_imports: true
+    has_main: true
+    import_updates:
+      - old: "import pandas as pd"
+        new: "import pandas as pd"  # No change - external package
+        action: "keep"
+      - old: "from ollama import Client"
+        new: "from ollama import Client"  # No change - external package
+        action: "keep"
+    description: "Synthetic data generation using Ollama LLM"
+
+  - old_path: "structured_extractor.py"
+    new_path: "src/syntha/extractor.py"
+    file_type: "source"
+    has_imports: true
+    has_main: true
+    import_updates:
+      - old: "import pandas as pd"
+        new: "import pandas as pd"  # No change - external package
+        action: "keep"
+      - old: "from ollama import Client"
+        new: "from ollama import Client"  # No change - external package
+        action: "keep"
+    description: "Structured data extraction from generated text"
+
+  - old_path: "deepeval_adapter.py"
+    new_path: "src/syntha/evaluation/adapter.py"
+    file_type: "source"
+    has_imports: true
+    has_main: false
+    import_updates:
+      - old: "from deepeval.test_case import LLMTestCase"
+        new: "from deepeval.test_case import LLMTestCase"  # No change - external package
+        action: "keep"
+    description: "Adapter for DeepEval test case creation"
+
+  - old_path: "deepeval_metrics.py"
+    new_path: "src/syntha/evaluation/metrics.py"
+    file_type: "source"
+    has_imports: true
+    has_main: false
+    import_updates:
+      - old: "from deepeval.metrics import AnswerRelevancyMetric"
+        new: "from deepeval.metrics import AnswerRelevancyMetric"  # No change
+        action: "keep"
+      - old: "from deepeval_adapter import create_test_case"  # If exists
+        new: "from .adapter import create_test_case"  # Relative import
+        action: "update_to_relative"
+    description: "Custom metrics for evaluation"
+
+  - old_path: "deepeval_runner.py"
+    new_path: "src/syntha/evaluation/runner.py"
+    file_type: "source"
+    has_imports: true
+    has_main: true
+    import_updates:
+      - old: "from deepeval_adapter import create_test_case"  # If exists
+        new: "from .adapter import create_test_case"  # Relative import
+        action: "update_to_relative"
+      - old: "from deepeval_metrics import AnswerRelevancyMetric"  # If exists
+        new: "from .metrics import AnswerRelevancyMetric"  # Relative import
+        action: "update_to_relative"
+    description: "Evaluation pipeline runner"
+
+  - old_path: "filter_eval_results.py"
+    new_path: "src/syntha/evaluation/filter.py"
+    file_type: "source"
+    has_imports: true
+    has_main: true
+    import_updates: []
+    description: "Filter and separate evaluation results by pass/fail"
+
+# Data files - Input files that need to be moved
+data_files:
+  - old_path: "kpi_profiles.csv"
+    new_path: "data/kpi_profiles.csv"
+    file_type: "data"
+    version_controlled: true
+    description: "KPI profile data for synthetic generation"
+
+# Documentation files - Docs that need to be moved and renamed
+documentation_files:
+  - old_path: "AGENTS.md"
+    new_path: "docs/AGENTS.md"
+    file_type: "documentation"
+    version_controlled: true
+    description: "Agent documentation"
+
+  - old_path: "Story 1.1.md"
+    new_path: "docs/story_1.1.md"
+    file_type: "documentation"
+    version_controlled: true
+    rename_reason: "Consistent naming convention (lowercase with underscores)"
+    description: "Story 1.1 documentation"
+
+  - old_path: "Story 1.2.md"
+    new_path: "docs/story_1.2.md"
+    file_type: "documentation"
+    version_controlled: true
+    rename_reason: "Consistent naming convention (lowercase with underscores)"
+    description: "Story 1.2 documentation"
+
+# Output files - Generated files to be moved (not version controlled)
+output_files:
+  - old_path: "campaign_rules_dataset.jsonl"
+    new_path: "outputs/datasets/campaign_rules_dataset.jsonl"
+    file_type: "output"
+    version_controlled: false
+    output_category: "dataset"
+
+  - old_path: "campaign_rules_dataset.jsonl.meta.json"
+    new_path: "outputs/datasets/campaign_rules_dataset.jsonl.meta.json"
+    file_type: "output"
+    version_controlled: false
+    output_category: "metadata"
+
+  - old_path: "campaign_rules_structured.jsonl"
+    new_path: "outputs/structured/campaign_rules_structured.jsonl"
+    file_type: "output"
+    version_controlled: false
+    output_category: "structured"
+
+  - old_path: "campaign_rules_structured.jsonl.meta.json"
+    new_path: "outputs/structured/campaign_rules_structured.jsonl.meta.json"
+    file_type: "output"
+    version_controlled: false
+    output_category: "metadata"
+
+  - old_path: "campaign_rules_eval.jsonl"
+    new_path: "outputs/evaluations/campaign_rules_eval.jsonl"
+    file_type: "output"
+    version_controlled: false
+    output_category: "evaluation"
+
+  - old_path: "campaign_rules_eval.jsonl.meta.json"
+    new_path: "outputs/evaluations/campaign_rules_eval.jsonl.meta.json"
+    file_type: "output"
+    version_controlled: false
+    output_category: "metadata"
+
+  - old_path: "campaign_rules_passed.jsonl"
+    new_path: "outputs/filtered/campaign_rules_passed.jsonl"
+    file_type: "output"
+    version_controlled: false
+    output_category: "filtered"
+
+  - old_path: "campaign_rules_failed.jsonl"
+    new_path: "outputs/filtered/campaign_rules_failed.jsonl"
+    file_type: "output"
+    version_controlled: false
+    output_category: "filtered"
+
+# Directories to be created
+directories:
+  # Source directories
+  - path: "src"
+    purpose: "Root source directory"
+    in_git: true
+    requires_init: false
+
+  - path: "src/syntha"
+    purpose: "Main package directory"
+    in_git: true
+    requires_init: true
+
+  - path: "src/syntha/evaluation"
+    purpose: "Evaluation module"
+    in_git: true
+    requires_init: true
+
+  - path: "src/syntha/utils"
+    purpose: "Utility functions"
+    in_git: true
+    requires_init: true
+
+  # Test directories
+  - path: "tests"
+    purpose: "Test root directory"
+    in_git: true
+    requires_init: true
+
+  - path: "tests/test_evaluation"
+    purpose: "Tests for evaluation module"
+    in_git: true
+    requires_init: true
+
+  # Supporting directories
+  - path: "scripts"
+    purpose: "CLI entry point scripts"
+    in_git: true
+    requires_init: false
+
+  - path: "configs"
+    purpose: "YAML configuration files"
+    in_git: true
+    requires_init: false
+
+  - path: "data"
+    purpose: "Input data files"
+    in_git: true
+    requires_init: false
+
+  - path: "docs"
+    purpose: "Project documentation"
+    in_git: true
+    requires_init: false
+
+  # Output directories (git-ignored)
+  - path: "outputs"
+    purpose: "Generated output files"
+    in_git: false
+    requires_init: false
+    gitignore: true
+
+  - path: "outputs/datasets"
+    purpose: "Generated datasets"
+    in_git: false
+    requires_init: false
+
+  - path: "outputs/structured"
+    purpose: "Structured extractions"
+    in_git: false
+    requires_init: false
+
+  - path: "outputs/evaluations"
+    purpose: "Evaluation results"
+    in_git: false
+    requires_init: false
+
+  - path: "outputs/filtered"
+    purpose: "Filtered results (passed/failed)"
+    in_git: false
+    requires_init: false
+
+# New files to be created
+new_files:
+  # Python __init__ files
+  - path: "src/syntha/__init__.py"
+    type: "init"
+    content: |
+      """Syntha: Synthetic data generation and evaluation toolkit."""
+      __version__ = "0.1.0"
+
+  - path: "src/syntha/evaluation/__init__.py"
+    type: "init"
+    content: |
+      """Evaluation module for assessing generated data quality."""
+
+  - path: "src/syntha/utils/__init__.py"
+    type: "init"
+    content: |
+      """Utility functions for file I/O and common operations."""
+
+  - path: "tests/__init__.py"
+    type: "init"
+    content: ""
+
+  - path: "tests/test_evaluation/__init__.py"
+    type: "init"
+    content: ""
+
+  # CLI scripts
+  - path: "scripts/generate_dataset.py"
+    type: "cli_script"
+    target_module: "syntha.generator"
+    target_function: "main"
+    description: "Generate synthetic dataset from KPI profiles"
+
+  - path: "scripts/extract_structure.py"
+    type: "cli_script"
+    target_module: "syntha.extractor"
+    target_function: "main"
+    description: "Extract structured data from generated text"
+
+  - path: "scripts/run_evaluation.py"
+    type: "cli_script"
+    target_module: "syntha.evaluation.runner"
+    target_function: "main"
+    description: "Run evaluation pipeline on generated data"
+
+  - path: "scripts/filter_results.py"
+    type: "cli_script"
+    target_module: "syntha.evaluation.filter"
+    target_function: "main"
+    description: "Filter evaluation results into passed/failed"
+
+  # Configuration files
+  - path: "configs/generation_config.yaml"
+    type: "config"
+    description: "Configuration for synthetic data generation"
+
+  - path: "configs/extraction_config.yaml"
+    type: "config"
+    description: "Configuration for structured extraction"
+
+  - path: "configs/evaluation_config.yaml"
+    type: "config"
+    description: "Configuration for evaluation pipeline"
+
+  # Package metadata
+  - path: "pyproject.toml"
+    type: "package_config"
+    description: "Python package configuration"
+
+  - path: "requirements.txt"
+    type: "dependencies"
+    description: "Python dependencies list"
+
+  - path: "README.md"
+    type: "documentation"
+    description: "Project overview and quick start guide"
+
+# Files/directories to preserve (not migrate)
+preserve:
+  - path: ".git"
+    reason: "Version control directory"
+
+  - path: ".idea"
+    reason: "IDE configuration"
+
+  - path: ".deepeval"
+    reason: "DeepEval cache/config directory"
+
+  - path: "__pycache__"
+    reason: "Python cache directory (will be regenerated)"
+
+  - path: "specs"
+    reason: "Feature specifications (already in correct location)"
+
+  - path: "syn"
+    reason: "Speckit working directory"
+
+# Validation rules
+validation:
+  pre_migration:
+    - check: "All source files exist at old_path"
+      error: "Missing source file prevents migration"
+    - check: "No files exist at new_path"
+      error: "Target path already exists, risk of overwrite"
+    - check: "Git working directory is clean"
+      error: "Uncommitted changes could be lost"
+
+  post_migration:
+    - check: "All new_path files exist"
+      error: "File migration incomplete"
+    - check: "All __init__.py files created"
+      error: "Package structure incomplete"
+    - check: "Python can import syntha package"
+      error: "Package not importable, import paths incorrect"
+    - check: "All imports resolve without errors"
+      error: "Import statements not properly updated"
+    - check: "All old_path locations empty (files removed)"
+      error: "Old files not cleaned up"
+
+# Migration order
+migration_phases:
+  phase_1_structure:
+    order: 1
+    description: "Create directory structure and __init__.py files"
+    tasks:
+      - "Create all directories"
+      - "Create all __init__.py files"
+      - "Verify package structure"
+
+  phase_2_source_migration:
+    order: 2
+    description: "Move and rename source files"
+    tasks:
+      - "Move source files using git mv"
+      - "Update import statements in moved files"
+      - "Verify imports work"
+
+  phase_3_data_docs:
+    order: 3
+    description: "Move data and documentation files"
+    tasks:
+      - "Move data files"
+      - "Move and rename documentation files"
+      - "Verify file integrity"
+
+  phase_4_new_files:
+    order: 4
+    description: "Create new configuration and CLI files"
+    tasks:
+      - "Create configuration YAML files"
+      - "Create CLI scripts"
+      - "Create README and package metadata"
+      - "Update .gitignore"
+
+  phase_5_outputs:
+    order: 5
+    description: "Organize output files"
+    tasks:
+      - "Move existing output files to new structure"
+      - "Add .gitkeep files for git-ignored directories"
+      - "Update .gitignore for outputs/"
+
+  phase_6_validation:
+    order: 6
+    description: "Validate migration success"
+    tasks:
+      - "Test all imports"
+      - "Run CLI scripts"
+      - "Verify YAML configs parse"
+      - "Confirm old files removed"
+
+# Success criteria (from spec.md)
+success_criteria:
+  - id: "SC-001"
+    criterion: "All Python modules can be successfully imported"
+    verification: "python -c 'from syntha.generator import *; from syntha.extractor import *; from syntha.evaluation import *'"
+
+  - id: "SC-002"
+    criterion: "All existing functionality continues to work"
+    verification: "Run original workflows and verify outputs match"
+
+  - id: "SC-003"
+    criterion: "Project structure matches proposed structure"
+    verification: "Tree command shows 7 top-level directories with correct subdirectories"
+
+  - id: "SC-004"
+    criterion: "Zero files remain in old locations"
+    verification: "No Python files in project root (except old/__pycache__)"
+
+  - id: "SC-005"
+    criterion: "All CLI scripts execute successfully"
+    verification: "Run each script with --help flag"
+
+  - id: "SC-006"
+    criterion: "All tests pass"
+    verification: "pytest tests/ -v"
+
+  - id: "SC-007"
+    criterion: "Configuration files are valid YAML"
+    verification: "python -c 'import yaml; yaml.safe_load(open(\"configs/*.yaml\"))'"
+
+  - id: "SC-008"
+    criterion: "Package metadata allows installation"
+    verification: "pip install -e . succeeds"
+
+  - id: "SC-009"
+    criterion: "Documentation is accessible"
+    verification: "All docs/*.md files exist and are readable"
+
+  - id: "SC-010"
+    criterion: "Developers can locate components quickly"
+    verification: "Manual inspection of directory structure clarity"

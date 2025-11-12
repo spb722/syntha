@@ -102,22 +102,22 @@ def parse_args():
     )
     parser.add_argument(
         "--eval",
-        default="campaign_rules_eval.jsonl",
+        default="outputs/evaluations/campaign_rules_eval.jsonl",
         help="Path to evaluation results JSONL file.",
     )
     parser.add_argument(
         "--structured",
-        default="campaign_rules_structured.jsonl",
+        default="outputs/structured/campaign_rules_structured.jsonl",
         help="Path to structured dataset JSONL file.",
     )
     parser.add_argument(
         "--passed-output",
-        default="campaign_rules_passed.jsonl",
+        default="outputs/filtered/campaign_rules_passed.jsonl",
         help="Output file for passed records.",
     )
     parser.add_argument(
         "--failed-output",
-        default="campaign_rules_failed.jsonl",
+        default="outputs/filtered/campaign_rules_failed.jsonl",
         help="Output file for failed records.",
     )
     return parser.parse_args()

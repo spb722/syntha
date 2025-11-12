@@ -1,11 +1,11 @@
 {
-  "csv_file": "kpi_profiles.csv",
+  "csv_file": "data/kpi_profiles.csv",
   "model": "glm-4.6:cloud",
   "temperature": 0.85,
-  "output_file": "/Users/sachinpb/PycharmProjects/syntha/campaign_rules_dataset.jsonl",
+  "output_file": "/Users/sachinpb/PycharmProjects/syntha/outputs/datasets/campaign_rules_dataset.jsonl",
   "distribution": {
-    "simple": 2,
-    "medium": 2,
+    "simple": 1,
+    "medium": 1,
     "complex": 1
   },
   "plan": [
@@ -18,31 +18,19 @@
     {
       "index": 1,
       "record_id": "rule-000002",
-      "complexity": "simple",
-      "offset": 651
+      "complexity": "medium",
+      "offset": 1055
     },
     {
       "index": 2,
       "record_id": "rule-000003",
-      "complexity": "medium",
-      "offset": 1563
-    },
-    {
-      "index": 3,
-      "record_id": "rule-000004",
-      "complexity": "medium",
-      "offset": 3102
-    },
-    {
-      "index": 4,
-      "record_id": "rule-000005",
       "complexity": "complex",
-      "offset": 4985
+      "offset": 3002
     }
   ],
-  "completed": 5,
-  "requested_examples": 5,
-  "resolved_examples": 5,
-  "started_at": "2025-11-11T12:36:18.323820",
-  "last_generated_at": "2025-11-11T12:36:44.405476"
+  "completed": 3,
+  "requested_examples": 3,
+  "resolved_examples": 3,
+  "started_at": "2025-11-11T16:40:26.893672",
+  "last_generated_at": "2025-11-11T16:40:44.359579"
 }
