@@ -234,10 +234,11 @@ def run_extraction(source_path: Path, output_path: Path, meta_path: Path, plan,
                 record["structured_output"] = extraction.model_dump()
                 record.pop("structured_error", None)
             except Exception as exc:
-                status = "error"
-                record["structured_output"] = None
-                record["structured_error"] = str(exc)
-                print(f"✗ Extraction failed for {record_id}: {exc}")
+                print(f"\n{'=' * 80}")
+                print(f"✗ EXTRACTION FAILED for {record_id}")
+                print(f"Error: {exc}")
+                print(f"{'=' * 80}\n")
+                raise  # Exit immediately on any error
 
             record["structured_status"] = status
             output_offset = append_jsonl(output_path, record)
