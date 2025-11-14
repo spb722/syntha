@@ -4,12 +4,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from ollama import Client
 from pydantic import BaseModel
 
-# Ollama client configuration
-client = Client(host="http://localhost:11434")
-EXTRACT_MODEL = "glm-4.6:cloud"
+from syntha.utils import ClientManager
+
+# Global client manager and model configuration
+client_manager = None
+EXTRACT_MODEL = None
 
 
 class UtteranceExtraction(BaseModel):
@@ -80,8 +81,7 @@ def extract_structured(utterance: str, model: str, temperature: float):
     """
     Use Ollama structured output to parse an utterance.
     """
-    resp = client.chat(
-        model=model,
+    resp = client_manager.chat(
         messages=[
             {"role": "system", "content": EXTRACT_SYSTEM.strip()},
             {"role": "user", "content": f"Extract fields from this instruction:\n{utterance}"}
@@ -292,7 +292,7 @@ def parse_args():
     )
     parser.add_argument(
         "--model",
-        default=EXTRACT_MODEL,
+        default="glm-4.6:cloud",
         help="Ollama model to use for structured extraction.",
     )
     parser.add_argument(
@@ -310,7 +310,13 @@ def parse_args():
 
 
 def main():
+    global client_manager, EXTRACT_MODEL
+
     args = parse_args()
+
+    # Initialize ClientManager with multi-client rotation support
+    client_manager = ClientManager()
+    EXTRACT_MODEL = client_manager.model
 
     input_path = Path(args.input)
     if not input_path.exists():

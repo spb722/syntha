@@ -5,12 +5,14 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-from ollama import Client
 
-# Initialize Ollama client
-client = Client(host="http://localhost:11434")
-MODEL = "glm-4.6:cloud"
+from syntha.utils import ClientManager
+
 ORDERED_COMPLEXITIES = ["simple", "medium", "complex"]
+
+# Initialize global client manager
+client_manager = None
+MODEL = None
 
 
 # ============================================================================
@@ -375,7 +377,7 @@ Generate ONE campaign instruction with {complexity.upper()} complexity following
 # CAMPAIGN RULE GENERATION
 # ============================================================================
 
-def generate_campaign_rule(kpi_df, complexity, tone=None, temperature=0.85):
+def generate_campaign_rule(kpi_df, complexity, tone=None, temperature=0.85, client_mgr=None):
     """
     Generate one synthetic campaign rule using sampled KPIs.
 
@@ -384,10 +386,16 @@ def generate_campaign_rule(kpi_df, complexity, tone=None, temperature=0.85):
         complexity: "simple", "medium", or "complex"
         tone: "formal", "direct", or "casual" (random if None)
         temperature: Generation temperature
+        client_mgr: Optional ClientManager instance (uses global if None)
 
     Returns:
         Dictionary with utterance and metadata
     """
+    # Use provided client_manager or fall back to global
+    mgr = client_mgr or client_manager
+    if mgr is None:
+        raise ValueError("ClientManager not initialized. Pass client_mgr parameter or initialize global client_manager.")
+
     # Random tone if not specified
     if tone is None:
         tone = random.choice(["formal", "direct", "casual"])
@@ -398,9 +406,8 @@ def generate_campaign_rule(kpi_df, complexity, tone=None, temperature=0.85):
     # Create prompt
     prompt = create_generation_prompt(sampled_kpis, complexity, tone)
 
-    # Call LLM
-    response = client.chat(
-        model=MODEL,
+    # Call LLM using ClientManager with automatic rotation on rate limits
+    response = mgr.chat(
         messages=[{"role": "user", "content": prompt}],
         options={"temperature": temperature}
     )
@@ -536,11 +543,11 @@ def validate_resume_meta(meta, args, output_path):
             "Temperature mismatch. Keep the same value or start with --mode fresh."
         )
 
-    if meta.get("model") != MODEL:
-        raise ValueError(
-            f"Model has changed (meta uses {meta.get('model')}, script uses {MODEL})."
-            " Start a fresh run if you need a new model."
-        )
+    # if meta.get("model") != MODEL:
+    #     raise ValueError(
+    #         f"Model has changed (meta uses {meta.get('model')}, script uses {MODEL})."
+    #         " Start a fresh run if you need a new model."
+    #     )
 
 
 def parse_args():
@@ -589,7 +596,13 @@ def parse_args():
 
 
 def main():
+    global client_manager, MODEL
+
     args = parse_args()
+
+    # Initialize ClientManager with multi-client rotation support
+    client_manager = ClientManager()
+    MODEL = client_manager.model
 
     output_path = Path(args.output)
     if output_path.suffix != ".jsonl":

@@ -2,8 +2,40 @@
 
 model:
   name: "glm-4.6:cloud"
-  host: "http://localhost:11434"
+
+  # List of client configurations with different API keys
+  # The system will automatically rotate to the next client on rate limit (429 error)
+  clients:
+    - host: "https://ollama.com"
+      api_key: "5c60ca21529340ab877bf511770cb7ad.vrIsWWpz3fVtg3wENRnP5nRS"#sachin
+    - host: "https://ollama.com"
+      api_key: "713c4cc35ac745b8a0f93283b4101d11.X2ZshbZjCgypsk3jckmzcBA2"#suhas
+    - host: "https://ollama.com"
+      api_key: "ec1ebcc9b2634fe598bba1d05937c358.8ArFhroxuK-Tz2j1P6IActhz" #kasif
+    - host: "https://ollama.com"
+      api_key: "becb5b157cf841e8afa3c1536b7d592a.L_ISqPnXYgHsKfB_qyvRlh1T" #namritha
+    - host: "https://ollama.com"
+      api_key: "b6120085f14e45aeb68fdcf79ad896e0.osIIo-pof9gjldhP6fzpzOyL" #subin
+    - host: "https://ollama.com"
+      api_key: "5d74ef716a22445f88e80b447e235a80.NatIzmwnsxhdDlDV777uxH_v" #sachin1
+    - host: "https://ollama.com"
+      api_key: "4b50f041afab444cb871cd13d692b57a.xMjl2jedwK1tgalOaPT7LQn9" #anto
+    - host: "https://ollama.com"
+      api_key: "9fc1cf0ee3c44ae599c87370735768ce.XjF0A8CY9MTLuf3dz1FKn148" #sachin2
+    - host: "https://ollama.com"
+      api_key: "7a34b29ac4ef54715bb8d6ff70862dac5.JJYLwz4ks5H_BPhChEILgxK7"#sachin3
+    - host: "https://ollama.com"
+      api_key: "2c17c611f6f64508b158cd902bcc2b30.c7Gk3cq43rENT9AZjx8EzhBa" #somia
+    - host: "https://ollama.com"
+      api_key: "30c126497ee04810b8255672b8782581.eJ5aL-z062U-7ZSFWl6oxR6_" #anto1
+    - host: "https://ollama.com"
+      api_key: "03771ba4e96b447bbf2b559f907cbd82.vCnyaha_oBhiV-sMmg1eJOwn" #anushri
+    - host: "https://ollama.com"
+      api_key: "ef95f70d19ff43ec8288f7769309c1b0.n7av29E7zhg-dioNQIWwSqne" #prademesh
+    - host: "https://ollama.com"
+      api_key: "4da7c64710964e518714cc6f99968de7.6-2qVv_lMWIr1_t1AGKsRkpB" #prademesh
   timeout: 60
+  max_retries_per_client: 1  # Number of retries per client before rotating
 
 sampling:
   simple_kpis: 1

@@ -226,3 +226,4 @@ When modifying code:
 
 **Note**: This file is automatically updated by the speckit workflow. Manual additions should be made outside the AUTO-MANAGED SECTION markers.
 - When committing to GitHub, no need to include done by Claude
+- In the commit message, don't include claude  code
