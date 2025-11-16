@@ -50,14 +50,18 @@ class ClientManager:
             api_key = client_config.get('api_key')
 
             if api_key:
-                # Create client with Bearer token authentication
+                # Create client with Bearer token authentication and timeout
                 client = Client(
                     host=host,
-                    headers={'Authorization': f'Bearer {api_key}'}
+                    headers={'Authorization': f'Bearer {api_key}'},
+                    timeout=self.timeout
                 )
             else:
-                # Create client without authentication (local instance)
-                client = Client(host=host)
+                # Create client without authentication (local instance) with timeout
+                client = Client(
+                    host=host,
+                    timeout=self.timeout
+                )
 
             self.clients.append({
                 'client': client,
@@ -66,11 +70,17 @@ class ClientManager:
                 'has_key': bool(api_key)
             })
 
-        print(f"✓ Initialized {len(self.clients)} Ollama client(s)")
+        print(f"✓ Initialized {len(self.clients)} Ollama client(s) with {self.timeout}s timeout")
 
     def chat(self, messages, options=None, format=None):
         """
-        Make a chat request with automatic client rotation on rate limits.
+        Make a chat request with automatic retry and client rotation.
+
+        Retry strategy:
+        - Timeout errors: Retry 5 times on the same client, then rotate to next
+        - Auth errors (401): Rotate immediately to next client
+        - Rate limit (429): Rotate immediately to next client
+        - Other errors: Raise immediately
 
         Args:
             messages: List of chat messages
@@ -81,62 +91,89 @@ class ClientManager:
             Response from successful client
 
         Raises:
-            Exception: If all clients fail with rate limits
+            Exception: If all clients fail after retries
         """
-        attempts = 0
-        max_attempts = len(self.clients)
+        client_attempts = 0
+        max_client_attempts = len(self.clients)
         last_error = None
+        timeout_retries_per_client = 5  # Retry 5 times for timeout errors
 
-        while attempts < max_attempts:
+        while client_attempts < max_client_attempts:
             client_info = self.clients[self.current_index]
             client = client_info['client']
             client_idx = client_info['index']
 
-            try:
-                print(f"  → Using client #{client_idx + 1} ({client_info['host']})")
+            # Try current client with retries for timeout errors
+            for retry in range(timeout_retries_per_client):
+                try:
+                    if retry == 0:
+                        print(f"  → Using client #{client_idx + 1} ({client_info['host']})")
+                    else:
+                        print(f"  ⟳ Retry {retry}/{timeout_retries_per_client - 1} on client #{client_idx + 1}")
 
-                # Build chat kwargs
-                chat_kwargs = {
-                    'model': self.model,
-                    'messages': messages,
-                }
-                if options:
-                    chat_kwargs['options'] = options
-                if format:
-                    chat_kwargs['format'] = format
+                    # Build chat kwargs
+                    chat_kwargs = {
+                        'model': self.model,
+                        'messages': messages,
+                    }
+                    if options:
+                        chat_kwargs['options'] = options
+                    if format:
+                        chat_kwargs['format'] = format
 
-                response = client.chat(**chat_kwargs)
+                    response = client.chat(**chat_kwargs)
 
-                return response
+                    # Success! Return response
+                    return response
 
-            except Exception as e:
-                error_str = str(e)
-
-                # Check if it's a rate limit error (429) or auth error (401) - both should rotate
-                is_rate_limit = "429" in error_str or "rate limit" in error_str.lower()
-                is_auth_error = "401" in error_str or "unauthorized" in error_str.lower()
-
-                if is_rate_limit or is_auth_error:
-                    if is_rate_limit:
-                        print(f"  ✗ Client #{client_idx + 1} hit rate limit")
-                    elif is_auth_error:
-                        print(f"  ✗ Client #{client_idx + 1} unauthorized (invalid/expired API key)")
-
+                except Exception as e:
+                    error_str = str(e)
                     last_error = e
 
-                    # Rotate to next client
-                    self.current_index = (self.current_index + 1) % len(self.clients)
-                    attempts += 1
+                    # Check error type
+                    is_timeout = (
+                        "timeout" in error_str.lower() or
+                        "timed out" in error_str.lower() or
+                        "TimeoutError" in str(type(e)) or
+                        "ReadTimeout" in str(type(e))
+                    )
+                    is_rate_limit = "429" in error_str or "rate limit" in error_str.lower()
+                    is_auth_error = "401" in error_str or "unauthorized" in error_str.lower()
 
-                    if attempts < max_attempts:
-                        print(f"  ↻ Rotating to next client...")
-                else:
-                    # Other errors (network, model not found, etc.) - re-raise immediately
-                    raise
+                    if is_timeout:
+                        # Timeout error - retry on same client
+                        if retry < timeout_retries_per_client - 1:
+                            print(f"  ⚠ Client #{client_idx + 1} timeout, retrying...")
+                            continue  # Retry on same client
+                        else:
+                            # Max retries reached for this client
+                            print(f"  ✗ Client #{client_idx + 1} failed after {timeout_retries_per_client} timeout retries")
+                            break  # Move to next client
+
+                    elif is_auth_error:
+                        # Auth error - rotate immediately (no retry)
+                        print(f"  ✗ Client #{client_idx + 1} unauthorized (invalid/expired API key)")
+                        break  # Move to next client
+
+                    elif is_rate_limit:
+                        # Rate limit - rotate immediately (no retry)
+                        print(f"  ✗ Client #{client_idx + 1} hit rate limit")
+                        break  # Move to next client
+
+                    else:
+                        # Other errors (network, model not found, etc.) - re-raise immediately
+                        raise
+
+            # Rotate to next client
+            self.current_index = (self.current_index + 1) % len(self.clients)
+            client_attempts += 1
+
+            if client_attempts < max_client_attempts:
+                print(f"  ↻ Rotating to next client...")
 
         # All clients exhausted
         raise Exception(
-            f"All {len(self.clients)} clients failed (rate limits or auth errors). "
+            f"All {len(self.clients)} clients failed after retries. "
             f"Last error: {last_error}"
         )
 
