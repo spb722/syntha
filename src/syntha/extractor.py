@@ -93,6 +93,60 @@ def extract_structured(utterance: str, model: str, temperature: float):
     return UtteranceExtraction.model_validate_json(content)
 
 
+def extract_structured_with_feedback(
+    utterance: str,
+    previous_output: dict,
+    feedback: dict,
+    model: str,
+    temperature: float
+):
+    """
+    Re-extract structured output using evaluation feedback to improve quality.
+
+    Args:
+        utterance: Original campaign instruction
+        previous_output: Previous structured_output dict with normal_statements and schedule
+        feedback: Dict with keys 'schema', 'faithfulness', 'schedule' containing feedback reasons
+        model: Model name (unused, kept for signature compatibility)
+        temperature: Generation temperature
+
+    Returns:
+        UtteranceExtraction: Validated structured output
+    """
+    # Build feedback context
+    feedback_text = []
+    for metric, details in feedback.items():
+        if details.get("reason"):
+            feedback_text.append(f"- {metric.title()}: {details['reason']}")
+
+    feedback_str = "\n".join(feedback_text) if feedback_text else "No specific feedback provided."
+
+    # Build enhanced user prompt with feedback
+    user_prompt = f"""Extract fields from this instruction, addressing the following feedback:
+
+Original instruction:
+{utterance}
+
+Previous extraction:
+{json.dumps(previous_output, indent=2, ensure_ascii=False)}
+
+Evaluation feedback:
+{feedback_str}
+
+Please generate an improved structured output that addresses the feedback above."""
+
+    resp = client_manager.chat(
+        messages=[
+            {"role": "system", "content": EXTRACT_SYSTEM.strip()},
+            {"role": "user", "content": user_prompt}
+        ],
+        format=UtteranceExtraction.model_json_schema(),
+        options={"temperature": temperature}
+    )
+    content = _clean_structured_payload(resp["message"]["content"])
+    return UtteranceExtraction.model_validate_json(content)
+
+
 def atomic_write_json(path: Path, payload):
     """
     Persist JSON atomically through a temporary file.

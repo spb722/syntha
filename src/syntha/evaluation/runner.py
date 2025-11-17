@@ -132,7 +132,7 @@ def run_evaluations(
     thresholds: Dict[str, float],
     max_records: Optional[int],
 ) -> None:
-    judge = OllamaJudge(model_name=model)
+    judge = OllamaJudge()
     metrics = {
         "schema": SchemaMetric(model=judge),
         "faithfulness": FaithfulnessMetric(llm=judge, threshold=thresholds["faithfulness"]),

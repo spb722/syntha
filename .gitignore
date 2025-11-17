@@ -46,6 +46,7 @@ outputs/
 # Project specs and documentation
 specs/
 syn/
+fine-tune/
 
 # OS files
 .DS_Store

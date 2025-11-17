@@ -49,6 +49,7 @@ class FaithfulnessMetric(BaseMetric):
             "without adding hallucinated details.\n\n"
             "NOTE: Schedule/timing information is extracted separately, so do NOT penalize "
             "the statements for missing schedule details.\n\n"
+            "IMPORTANT: The use case should be in English.\n\n"
             f"Instruction:\n{utterance}\n\n"
             f"Statements:\n{statements}\n\n"
             "Answer YES if the statements faithfully cover all non-schedule business logic, "
@@ -81,6 +82,7 @@ class ScheduleIsolationMetric(BaseMetric):
         prompt = (
             "You are an evaluator. Check whether the extracted schedule text matches the "
             "timing instructions in the campaign and does not contain targeting/actions.\n\n"
+            "IMPORTANT: The use case should be in English.\n\n"
             f"Instruction:\n{utterance}\n\n"
             f"Extracted schedule:\n{schedule}\n\n"
             "Answer YES if the schedule faithfully captures only the timing info present in "

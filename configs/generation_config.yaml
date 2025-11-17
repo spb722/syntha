@@ -7,7 +7,23 @@ model:
   # The system will automatically rotate to the next client on rate limit (429 error)
   clients:
     - host: "https://ollama.com"
+      api_key: "cda99b5533654aaf896b2df395abf56a.47-KghiJsiWa1qWWiS8r9MnY"#krishna
+    - host: "https://ollama.com"
+      api_key: "a3a25a49abfd47c29d1914dbc3f61d88.XGsdXXP9SbeFSeuqIsGRCYS3"#vaisakh
+    - host: "https://ollama.com"
+      api_key: "7373efd8d10645d4a2ccfa9e45fe2793.Mo1n-fbW9r0AE7DWEHGAqACs"#pranav
+    - host: "https://ollama.com"
+      api_key: "b5d0893e65a947f1865556b1c8f40e9d.hzwHVIirAmmJFD5aQk2Wm6zq"#sachin
+    - host: "https://ollama.com"
+      api_key: "0f77f947a21041fba514fcc355cf40c9.pGrj5keaE5ETYsgSFigbFs8L"#sachin
+    - host: "https://ollama.com"
+      api_key: "64ab7d81db3d492392a2c86307d5d348.LmOOgPzJKwSPkP_4vjnWAbQD"#sachin
+    - host: "https://ollama.com"
+      api_key: "62da737172664db18ecd69fc0f86e5fd.kV1QghsJGGf2trI4-hETBn6c"#sachin
+    - host: "https://ollama.com"
       api_key: "5c60ca21529340ab877bf511770cb7ad.vrIsWWpz3fVtg3wENRnP5nRS"#sachin
+    - host: "https://ollama.com"
+      api_key: "0972cb5cc9c547faa42d7ef88bfed783.1N62mrFbKzxK5cz7jFrPr19k"#parthi
     - host: "https://ollama.com"
       api_key: "713c4cc35ac745b8a0f93283b4101d11.X2ZshbZjCgypsk3jckmzcBA2"#suhas
     - host: "https://ollama.com"
